@@ -20,6 +20,7 @@ class BatchColorize(object):
         self.cmap = torch.from_numpy(self.cmap[:n])
 
     def __call__(self, gray_image):
+        # 输入的图片不是one hot 的形式，而是每个像素代表类别，有利于将不同部分显示到同一张图上
         size = gray_image.shape
         color_image = np.zeros((size[0], 3, size[1], size[2]), dtype=np.float32)
 
@@ -37,7 +38,7 @@ class BatchColorize(object):
 
 def color_map(N=256, normalized=True):
     def bitget(byteval, idx):
-        return ((byteval & (1 << idx)) != 0)
+        return ((byteval & (1 << idx)) != 0) # << 是向左移动一位（二进制）
 
     dtype = 'float32' if normalized else 'uint8'
     cmap = np.zeros((N, 3), dtype=dtype)
