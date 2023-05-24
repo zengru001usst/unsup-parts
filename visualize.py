@@ -38,7 +38,7 @@ class BatchColorize(object):
 
 def color_map(N=256, normalized=True):
     def bitget(byteval, idx):
-        return ((byteval & (1 << idx)) != 0) # << 是向左移动一位（二进制）
+        return ((byteval & (1 << idx)) != 0) # << 是向左移动idx位（二进制），相当于1乘以2idx次方
 
     dtype = 'float32' if normalized else 'uint8'
     cmap = np.zeros((N, 3), dtype=dtype)
@@ -46,7 +46,7 @@ def color_map(N=256, normalized=True):
         r = g = b = 0
         c = i
         for j in range(8):
-            r = r | (bitget(c, 0) << 7-j)
+            r = r | (bitget(c, 0) << 7-j) # |为逻辑或，按位或
             g = g | (bitget(c, 1) << 7-j)
             b = b | (bitget(c, 2) << 7-j)
             c = c >> 3
@@ -54,7 +54,7 @@ def color_map(N=256, normalized=True):
         cmap[i] = np.array([r, g, b])
 
     cmap = cmap/255 if normalized else cmap
-    return cmap
+    return cmap #根据类别生成颜色图
 
 def get_centers(pred_softmax):
     input_size = pred_softmax.shape[-1]
@@ -143,6 +143,7 @@ class Visualizer(object):
             wandb.log({f'{setting}/{name}': wandb.Image(tps_imgs_viz)}, step=i_iter)
 
     def vis_image_pred(self, setting, i_iter, name, tps_imgs, tps_pred, mean):
+        #为什么这里都要有mean，是因为预处理里面减去了吗
         if i_iter % self.vis_interval == 0 :
             i_shape = tps_imgs.shape
             mean_tensor = torch.tensor(mean).float().expand(i_shape[0], i_shape[3], i_shape[2], 3).transpose(1,3)
