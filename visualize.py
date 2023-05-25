@@ -151,6 +151,7 @@ class Visualizer(object):
             tps_pred = np.asarray(np.argmax(tps_pred, axis=1), dtype=np.int)
             tps_pred = self.colorize(tps_pred)
             tps_pred = vutils.make_grid(torch.tensor(tps_pred), normalize=False, scale_each=False)
+            # make_grid 方便将batch内的图片排列到一张图片中集中显示
             tps_imgs_viz = torch.clamp(tps_imgs+mean_tensor, 0.0, 255.0)
             tps_imgs_viz = vutils.make_grid(tps_imgs_viz/255.0, normalize=False, scale_each=False)
             tps_imgs_viz = (tps_imgs_viz + tps_pred)/2
